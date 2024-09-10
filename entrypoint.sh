@@ -54,7 +54,7 @@ fi
 if ! flyctl status --app "$app"; then
   # Backup the original config file since 'flyctl launch' messes up the [build.args] section
   cp "$config" "$config.bak"
-  flyctl launch --no-deploy --copy-config --name "$app" --image "$image" --region "$region" --org "$org" ${build_args} ${build_secrets}
+  flyctl launch --remote-only --no-deploy --copy-config --name "$app" --image "$image" --region "$region" --org "$org" ${build_args} ${build_secrets}
   # Restore the original config file
   cp "$config.bak" "$config"
 fi
@@ -71,9 +71,9 @@ fi
 # Trigger the deploy of the new version.
 echo "Contents of config $config file: " && cat "$config"
 if [ -n "$INPUT_VM" ]; then
-  flyctl deploy --config "$config" --app "$app" --regions "$region" --image "$image" --strategy immediate --ha=$INPUT_HA ${build_args} ${build_secrets} --vm-size "$INPUT_VMSIZE"
+  flyctl deploy --remote-only --config "$config" --app "$app" --regions "$region" --image "$image" --strategy immediate --ha=$INPUT_HA ${build_args} ${build_secrets} --vm-size "$INPUT_VMSIZE"
 else
-  flyctl deploy --config "$config" --app "$app" --regions "$region" --image "$image" --strategy immediate --ha=$INPUT_HA ${build_args} ${build_secrets} --vm-cpu-kind "$INPUT_CPUKIND" --vm-cpus $INPUT_CPU --vm-memory "$INPUT_MEMORY"
+  flyctl deploy --remote-only --config "$config" --app "$app" --regions "$region" --image "$image" --strategy immediate --ha=$INPUT_HA ${build_args} ${build_secrets} --vm-cpu-kind "$INPUT_CPUKIND" --vm-cpus $INPUT_CPU --vm-memory "$INPUT_MEMORY"
 fi
 
 # Make some info available to the GitHub workflow.
